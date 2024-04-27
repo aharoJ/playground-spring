@@ -24,3 +24,7 @@ hs_err_pid*
 replay_pid*
 **/application.properties
 .DS_Store
+
+# TEMP
+dev/
+00/
