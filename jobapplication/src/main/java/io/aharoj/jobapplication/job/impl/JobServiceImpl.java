@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import io.aharoj.jobapplication.job.Job;
 import io.aharoj.jobapplication.job.JobService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 /**
  * JobServiceImpl
@@ -28,6 +26,16 @@ public class JobServiceImpl implements JobService {
   public void createJob(Job job) {
     job.setId(nextId++);
     jobs.add(job);
+  }
+
+  @Override
+  public Job getJobById(Long id) {
+    for (Job job : jobs) {
+      if (job.getId().equals(id)) {
+        return job;
+      }
+    }
+    return null;
   }
 
 }
