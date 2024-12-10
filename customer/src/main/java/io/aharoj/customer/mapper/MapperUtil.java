@@ -14,7 +14,7 @@ import io.aharoj.customer.model.entity.Customer;
 @Component
 public class MapperUtil {
   // Customer Mapper
-  public static CustomerResponse mapToCustomerResponse(Customer customer) {
+  public static CustomerResponse mapCustomerResponse(Customer customer) {
     CustomerResponse response = new CustomerResponse();
     response.setFullName(customer.getFirstName() + " " + customer.getLastName());
     response.setEmail(customer.getEmail());
@@ -22,7 +22,7 @@ public class MapperUtil {
     return response;
   }
 
-  public static Customer mapToCustomerRequest(CustomerRequest request) {
+  public static Customer mapCustomerRequest(CustomerRequest request) {
     Customer customer = new Customer();
     customer.setFirstName(request.getFirstName());
     customer.setLastName(request.getLastName());
@@ -32,7 +32,7 @@ public class MapperUtil {
   }
 
   // MUST BE VOID
-  public static void mapUpdatesToCustomer(CustomerRequest request, Customer customer) {
+  public static void mapCustomerUpdate(CustomerRequest request, Customer customer) {
     customer.setFirstName(request.getFirstName());
     customer.setLastName(request.getLastName());
     customer.setEmail(request.getEmail());
