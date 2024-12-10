@@ -16,64 +16,61 @@ import io.aharoj.customer.service.CustomerService;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-
   @Autowired
   private CustomerRepository customerRepository;
 
-  // NOT GOOD BECAUSE WE USE STATIC TO NOT GET AN INSTANCE
-  // @Autowired
-  // private MapperUtil mapperUtil;
+  /**
+   * NOT GOOD BECAUSE WE USE STATIC TO NOT GET AN INSTANCE
+   * 
+   * Autowired private MapperUtil mapperUtil;
+   */
 
   @Override
   public CustomerResponse createCustomer(CustomerRequest request) {
+    // check if email is locked in
     if (customerRepository.existsByEmail(request.getEmail())) {
       throw new EmailIsAlreadyTaken();
     }
 
-    // map request to entity
-    Customer customer = MapperUtil.mapToCustomerRequest(request);
+    // request form
+    Customer customer = MapperUtil.mapCustomerRequest(request);
 
-    // Save customer entity into the database
+    // store record to db
     Customer savedCustomer = customerRepository.save(customer);
 
-    // Map saved customer entity to CustomerResponse DTO
-    CustomerResponse response = MapperUtil.mapToCustomerResponse(savedCustomer);
+    // return response to client
+    CustomerResponse response = MapperUtil.mapCustomerResponse(savedCustomer);
 
-    // return the response DTO
     return response;
   }
 
   @Override
   public CustomerResponse getCustomerById(Long customerId) {
     Customer customer = customerRepository.findById(customerId)
-        .orElseThrow(() -> new RuntimeException("no customer found"));
+        .orElseThrow(() -> new RuntimeException("customer not found"));
 
-    return MapperUtil.mapToCustomerResponse(customer);
+    return MapperUtil.mapCustomerResponse(customer);
   }
 
   @Override
   public List<CustomerResponse> getAllCustomers() {
     List<Customer> customers = customerRepository.findAll();
 
-    return customers.stream().map(MapperUtil::mapToCustomerResponse).collect(Collectors.toList());
+    return customers.stream().map(MapperUtil::mapCustomerResponse).collect(Collectors.toList());
   }
 
-  /**
-   * UPDATE WITH MAPPER
-   */
   @Override
   public CustomerResponse updateCustomer(Long customerId, CustomerRequest request) {
     Customer customer = customerRepository.findById(customerId)
-        .orElseThrow(() -> new RuntimeException("No customer found"));
+        .orElseThrow(() -> new RuntimeException("customer not found"));
+    // request form + update
+    MapperUtil.mapCustomerUpdate(request, customer);
 
-    // Map updates from the request to the customer entity
-    MapperUtil.mapUpdatesToCustomer(request, customer);
-
-    // Save the updated customer
+    // save record into db
     Customer updatedCustomer = customerRepository.save(customer);
 
-    // Map to CustomerResponse and return
-    return MapperUtil.mapToCustomerResponse(updatedCustomer);
+    // return response to client
+    return MapperUtil.mapCustomerResponse(updatedCustomer);
   }
 
   /**
@@ -101,8 +98,9 @@ public class CustomerServiceImpl implements CustomerService {
   @Override
   public void deleteCustomer(Long customerId) {
     Customer customer = customerRepository.findById(customerId)
-        .orElseThrow(() -> new RuntimeException("No customer found :("));
+        .orElseThrow(() -> new RuntimeException("customer not found"));
 
+    // MapperUtil.mapToCustomerResponse(customer);
     customerRepository.delete(customer);
   }
 }
